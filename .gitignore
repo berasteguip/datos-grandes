@@ -1,0 +1,8 @@
+# Ignorar entorno virtual
+.venv/
+
+# Artefactos comunes de Python (opcionales)
+__pycache__/
+*.py[cod]
+*.pyo
+.env
