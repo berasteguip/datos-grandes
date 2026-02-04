@@ -1,7 +1,7 @@
-Informe de Sprint 1
+Informe de Sprint 3
 
 Proyecto: TradeData – Análisis de Datos de Trading de Criptomonedas
-Sprint: Sprint 1
+Sprint: Sprint 3
 Periodo: DD/MM/YYYY – DD/MM/YYYY
 Equipo / Consultora:
 Responsable del Sprint:
