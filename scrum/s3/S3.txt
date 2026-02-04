@@ -1,0 +1,62 @@
+Informe de Sprint 1
+
+Proyecto: TradeData – Análisis de Datos de Trading de Criptomonedas
+Sprint: Sprint 1
+Periodo: DD/MM/YYYY – DD/MM/YYYY
+Equipo / Consultora:
+Responsable del Sprint:
+
+1. Objetivo del Sprint
+
+Descripción clara y concisa del objetivo global del sprint.
+Debe responder a: qué capacidad nueva aporta el sistema tras este sprint.
+
+2. Historias de Usuario Incluidas
+
+Como:
+Quiero:
+Para:
+
+3.X.1. Análisis
+Interpretación de la historia de usuario.
+Suposiciones realizadas.
+Decisiones de diseño relevantes (arquitectura, herramientas, servicios AWS).
+
+3.X.2. Implementación
+
+Servicios utilizados (S3, Glue, EC2, etc.).
+Estructura creada (buckets, carpetas, formatos, scripts).
+Descripción técnica de lo desarrollado.
+
+3.X.3. Evidencias
+Capturas de consola AWS / estructura S3.
+Fragmentos relevantes de configuración o código (si aplica).
+
+3.X.4. Resultado
+Qué se ha conseguido exactamente.
+En qué estado queda la historia de usuario.
+
+4. Arquitectura del Sprint
+Descripción de la arquitectura tal y como queda al finalizar el sprint.
+Diagrama actualizado (o referencia al diagrama).
+Qué capas se han implementado o modificado en este sprint.
+
+5. Validación y Pruebas
+Comprobaciones realizadas.
+Verificación de que los datos, recursos o procesos funcionan como se esperaba.
+
+6. Problemas y Bloqueos
+Listado claro y técnico de dificultades encontradas:
+Problema
+Impacto
+Solución aplicada o pendiente
+
+7. Conclusiones del Sprint
+Síntesis objetiva:
+Grado de cumplimiento del objetivo del sprint.
+Estado general del proyecto tras el sprint.
+
+8. Trabajo Pendiente y Próximo Sprint
+Elementos no completados.
+Dependencias abiertas.
+Enfoque previsto para el siguiente sprint.

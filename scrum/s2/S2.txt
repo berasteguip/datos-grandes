@@ -1,0 +1,66 @@
+Informe de Sprint 2
+
+Proyecto: TradeData – Análisis de Datos de Trading de Criptomonedas
+Sprint: Sprint 2
+Periodo: 29/01/2026 – 25/02/2026
+Equipo / Consultora: Antonio de Benito, Pablo Berástegui, Gonzalo García
+
+1. Objetivo del Sprint
+Sprint fundacional orientado a garantizar un entendimiento común del proyecto, de las fuentes de datos y del alcance analítico. Al finalizar el sprint, el equipo conoce el contexto de negocio, la herramienta TradingView, el universo de criptomonedas a analizar y las características del histórico de datos, permitiendo iniciar el diseño técnico con garantías.
+
+2. Historias de Usuario Incluidas
+
+Como
+Manager del proyecto
+Quiero
+Que las consultoras:
+• Utilicen el servicio AWS Glue Data Catalog y AWS Glue Crawler para leer y guardar los metadatos relacionados con los datos históricos almacenados en S3 
+    o El nombre de la base datos debe tener la siguiente nomenclatura: 
+        ▪ trade_data_<grupo> Ejemplo: trade_data_imat3a01 o El nombre de las tablas debe contener en su nombre referencias a la criptomoneda.
+        ▪ Ejemplo: btc o Se deberá de hacer un script en python para automatizar la creación y ejecución a demanda del crawler. 
+Para
+Realizar un gobierno de los datos almacenados en S3.
+
+3.3.1. Análisis
+Entendemos que el cliente no sólo quiere almacenar sus datos en forma de objeto en S3, sino que querrá hacer queries para analizar y obtener insights de sus propios datos.
+
+Para ello, lo más conveniente en este caso es utilizar un crawler, que se encarga de obtener los metadatos de nuestros objetos en S3 para transformarlos en bases de datos tabulares.
+
+3.3.2. Implementación
+
+Servicios utilizados: S3, Glue, Athena
+Estructura creada (buckets, carpetas, formatos, scripts).
+Descripción técnica de lo desarrollado.
+
+3.3.3. Evidencias
+Capturas de consola AWS / estructura S3.
+Fragmentos relevantes de configuración o código (si aplica).
+
+3.3.4. Resultado
+Qué se ha conseguido exactamente.
+En qué estado queda la historia de usuario.
+
+4. Arquitectura del Sprint
+Descripción de la arquitectura tal y como queda al finalizar el sprint.
+Diagrama actualizado (o referencia al diagrama).
+Qué capas se han implementado o modificado en este sprint.
+
+5. Validación y Pruebas
+Comprobaciones realizadas.
+Verificación de que los datos, recursos o procesos funcionan como se esperaba.
+
+6. Problemas y Bloqueos
+Listado claro y técnico de dificultades encontradas:
+Problema
+Impacto
+Solución aplicada o pendiente
+
+7. Conclusiones del Sprint
+Síntesis objetiva:
+Grado de cumplimiento del objetivo del sprint.
+Estado general del proyecto tras el sprint.
+
+8. Trabajo Pendiente y Próximo Sprint
+Elementos no completados.
+Dependencias abiertas.
+Enfoque previsto para el siguiente sprint.
