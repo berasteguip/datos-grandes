@@ -1,5 +1,4 @@
 import boto3
-import os
 
 glue = boto3.client("glue", region_name="eu-south-2")
 sts = boto3.client("sts")
@@ -15,12 +14,12 @@ response = glue.create_crawler(
     Targets={
         "S3Targets": [
             {
-                "Path": "s3://datos-grandes-eth-project/eth/"
+                "Path": "s3://datos-grandes-eth-project/"
             }
         ]
     },
     Description="Crawler para datos ETH",
-    TablePrefix="eth",
+    TablePrefix="eth_",
     SchemaChangePolicy={
         "UpdateBehavior": "UPDATE_IN_DATABASE",
         "DeleteBehavior": "LOG"

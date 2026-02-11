@@ -6,7 +6,7 @@ Periodo: 29/01/2026 – 25/02/2026
 Equipo / Consultora: Antonio de Benito, Pablo Berástegui, Gonzalo García
 
 1. Objetivo del Sprint
-Sprint fundacional orientado a garantizar un entendimiento común del proyecto, de las fuentes de datos y del alcance analítico. Al finalizar el sprint, el equipo conoce el contexto de negocio, la herramienta TradingView, el universo de criptomonedas a analizar y las características del histórico de datos, permitiendo iniciar el diseño técnico con garantías.
+    Sprint fundacional orientado a garantizar un entendimiento común del proyecto, de las fuentes de datos y del alcance analítico. Al finalizar el sprint, el equipo conoce el contexto de negocio, la herramienta TradingView, el universo de criptomonedas a analizar y las características del histórico de datos, permitiendo iniciar el diseño técnico con garantías.
 
 2. Historias de Usuario Incluidas
 
