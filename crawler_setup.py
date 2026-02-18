@@ -14,7 +14,7 @@ response = glue.create_crawler(
     Targets={
         "S3Targets": [
             {
-                "Path": "s3://datos-grandes-eth-project/"
+                "Path": "s3://datos-grandes-eth-project"
             }
         ]
     },
