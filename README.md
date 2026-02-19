@@ -1,78 +1,33 @@
+# Datos Grandes - Analisis de Criptomonedas (ETH)
 
-# TradingView Data For any Indexes and Stocks
+Proyecto de Big Data para ingestar, almacenar y transformar datos historicos de ETH, con soporte de descarga via TradingView y pipeline en AWS (S3 + Glue).
 
-A Simple TradingView Data Downloader. TradinViewData allows downloading upto 5000 Candles on any of the supported timeframe.
+**Estructura**
+- `data/` CSV historicos de ETH por anio.
+- `src/trading_view_data/` libreria y notebooks para descarga y exploracion.
+- `src/s3/` scripts de carga a S3 (capa bronze).
+- `src/aws_glue/` crawler y jobs ETL (bronze -> silver -> gold).
+- `scrum/` documentacion del proyecto y sprints.
 
-    
-# Usage
+**Flujo**
+1. Descargar datos con `src/trading_view_data/` y guardarlos en `data/`.
+2. Subir CSVs a S3 con `src/s3/s3_setup.py` (bronze por anio).
+3. Crear y ejecutar el crawler con `src/aws_glue/crawler/crawler_setup.py`.
+4. Ejecutar `src/aws_glue/etl_jobs/bronze2silver.py` para generar Parquet en silver.
+5. Ejecutar `src/aws_glue/etl_jobs/silver2gold.py` para calcular indicadores y escribir en gold.
 
-```Python
-from TradingviewData import TradingViewData,Interval
+**Requisitos**
+- Python con dependencias en `requirements.txt`.
+- Credenciales AWS configuradas localmente.
+- Region AWS usada en scripts: `eu-south-2`.
 
-request = TradingViewData()
+**Uso rapido**
+```powershell
+pip install -r requirements.txt
+python src/s3/s3_setup.py
+python src/aws_glue/crawler/crawler_setup.py
 ```
 
-
-# Get Symbol
-
-
-To find the exact symbols for an instrument you can use ``` request.search_symbol ``` method.
-
-```Python
-
-request.search('METAL','MCX')
-```
-
-Other method is check Manually via [Tradingview Search]("https://www.tradingview.com/markets/indices/").
-
-
-# Getting Data
-
-
-## Index
-
-```Python
-nifty_data = request.get_hist(symbol='NIFTY',exchange='NSE',interval=Interval.hour_1,n_bars=1000)
-```
-## Futures continuous contract
-
-```Python
-nifty_futures = request.get_hist(symbol='NIFTY',exchange='NSE',interval=Interval.hour_1,n_bars=1000,fut_contract=1)
-```
-
-## Stocks
-
-```Python
-relience_data = request.get_hist(symbol='RELIANCE',exchange='NSE',interval=Interval.min_5,n_bars=5000)
-```
-
-## MCX
-
-```Python
-crudeoil_data = request.get_hist(symbol='CRUDEOIL',exchange='MCX',interval=Interval.hour_1,n_bars=5000)
-```
-
-## Downloading data for extended market hours
-
-
-```Python
-extended_data = request.get_hist(symbol="EICHERMOT",exchange="NSE",interval=Interval.hour_1,n_bars=500, extended_session=False)
-```
-
-
-## Supported Time Frames
-
-
-#####  1 Minute = min_1
-#####  3 Minute = min_3
-#####  5 Minute = min_5
-#####  15 Minute = min_15
-#####  30 Minute = min_30
-#####  45 Minute = min_45
-#####  1 Hour = hour_1
-#####  2 Hour = hour_2
-#####  3 Hour = hour_3
-#####  4 Hour = hour_4
-#####  1 Day = daily
-#####  1 Week = weekly
-#####  1 Month = monthy
+**Notas**
+- El bucket definido en `src/s3/s3_setup.py` es `datos-grandes-eth-project`.
+- Los notebooks de ejemplo estan en `src/trading_view_data/`.
