@@ -57,7 +57,7 @@ $KAFKA_HOME/bin/kafka-topics.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --command-config client.properties \
   --create \
-  --topic imat3a_test \
+  --topic imat3a-ETH \
   --partitions 1 \
   --replication-factor 1
 ```
@@ -69,7 +69,7 @@ $KAFKA_HOME/bin/kafka-topics.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --command-config client.properties \
   --describe \
-  --topic imat3a_test
+  --topic imat3a_ETH
 ```
 
 ## 6) Mandar un mensaje al topic
@@ -80,7 +80,7 @@ Abrir productor interactivo:
 $KAFKA_HOME/bin/kafka-console-producer.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --producer.config client.properties \
-  --topic imat3a_test \
+  --topic imat3a_ETH \
   --property parse.key=true \
   --property key.separator=,
 ```
@@ -94,7 +94,7 @@ echo '1,Mensaje' | \
 $KAFKA_HOME/bin/kafka-console-producer.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --producer.config client.properties \
-  --topic imat3a_test \
+  --topic imat3a_ETH \
   --property parse.key=true \
   --property key.separator=,
 ```
@@ -125,7 +125,7 @@ $KAFKA_HOME/bin/kafka-consumer-groups.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --command-config client.properties \
   --describe \
-  --group imat3a_group1
+  --group imat3a_groupETH
 ```
 
 ## 10) Borrar un topic
@@ -135,5 +135,5 @@ $KAFKA_HOME/bin/kafka-topics.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --command-config client.properties \
   --delete \
-  --topic imat3a_test
+  --topic imat3a_ETH
 ```
