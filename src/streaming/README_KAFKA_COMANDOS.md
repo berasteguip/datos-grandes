@@ -69,7 +69,7 @@ $KAFKA_HOME/bin/kafka-topics.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --command-config client.properties \
   --describe \
-  --topic imat3a_ETH
+  --topic imat3a-ETH
 ```
 
 ## 6) Mandar un mensaje al topic
@@ -94,7 +94,7 @@ echo '1,Mensaje' | \
 $KAFKA_HOME/bin/kafka-console-producer.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --producer.config client.properties \
-  --topic imat3a_ETH \
+  --topic imat3a-ETH \
   --property parse.key=true \
   --property key.separator=,
 ```
@@ -125,7 +125,7 @@ $KAFKA_HOME/bin/kafka-consumer-groups.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --command-config client.properties \
   --describe \
-  --group imat3a_groupETH
+  --group imat3a_group
 ```
 
 ## 10) Borrar un topic
@@ -135,5 +135,5 @@ $KAFKA_HOME/bin/kafka-topics.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --command-config client.properties \
   --delete \
-  --topic imat3a_ETH
+  --topic imat3a-ETH
 ```
