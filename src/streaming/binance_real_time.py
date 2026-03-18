@@ -4,11 +4,12 @@ from binance import ThreadedWebsocketManager
 
 def handle_kline(msg):
     k = msg['k']
-    print(
-        f"Intervalo: {k['i']} | "
-        f"Cierre: {k['c']} | "
-        f"Volumen: {k['v']}"
-    )
+    print(k)
+    # print(
+    #     f"Intervalo: {k['i']} | "
+    #     f"Cierre: {k['c']} | "
+    #     f"Volumen: {k['v']}"
+    # )
 
 twm = ThreadedWebsocketManager()
 twm.start()
