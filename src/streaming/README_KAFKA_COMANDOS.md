@@ -105,7 +105,7 @@ $KAFKA_HOME/bin/kafka-console-producer.sh \
 $KAFKA_HOME/bin/kafka-console-consumer.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --consumer.config client.properties \
-  --topic imat3a_test \
+  --topic imat3a_ETH_VWAP \
   --property print.key=true \
   --consumer-property group.id=imat3a_group1
 ```
