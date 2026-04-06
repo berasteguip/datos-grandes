@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import json
 from kafka import KafkaProducer
 from binance import Client
