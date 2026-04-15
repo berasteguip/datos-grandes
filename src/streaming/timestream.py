@@ -29,7 +29,7 @@ VWAP_TOPIC = "imat3a_ETH_VWAP"
 BOOTSTRAP_SERVERS="51.49.235.244:9092"
 USERNAME="kafka_client"
 PASSWORD="88b8a35dca1a04da57dc5f3e"
-GROUP_ID="imat3a_group"
+GROUP_ID="imat3a_group1"
 
 
 def now_epoch_ms() -> str:
@@ -43,20 +43,44 @@ def iso_to_epoch_ms(value: str) -> str:
 
 def get_first_measure(records: dict, measure_name: str):
     """Return the first value found for a given field in a Kafka poll result."""
-    print(records)
+    if not records:
+        print(f"No Kafka messages received while looking for {measure_name}.")
+        return None
+
     for _, consumer_records in records.items():
         for consumer_record in consumer_records:
-            print(f"Received {measure_name} message: {consumer_record.value}")
+            print(
+                f"Received Kafka message: topic={consumer_record.topic}, "
+                f"partition={consumer_record.partition}, "
+                f"offset={consumer_record.offset}, "
+                f"key={consumer_record.key}, "
+                f"value={consumer_record.value}"
+            )
             value = consumer_record.value.get(measure_name)
             if value is not None:
                 return value
 
-    print(f"Error: {measure_name} value not found in Kafka messages.")
+    print(f"Kafka messages received, but {measure_name} value was not found.")
     return None
 
 
+def assign_all_partitions(consumer: KafkaConsumer, topic: str) -> None:
+    """Assign a consumer to every partition of a topic."""
+    partitions = consumer.partitions_for_topic(topic)
+    if not partitions:
+        raise RuntimeError(f"No partitions found for Kafka topic {topic}.")
+
+    topic_partitions = [
+        TopicPartition(topic, partition)
+        for partition in sorted(partitions)
+    ]
+    consumer.assign(topic_partitions)
+    print(f"Assigned {topic} partitions: {topic_partitions}")
+
+
 def send_to_timestream(ts: boto3.client, quote_value: float, vwap_value: float) -> None:
-    """Sends quote and VWAP values of coin to Timestream DB
+    """
+    Sends quote and VWAP values of coin to Timestream DB
 
     Args:
         ts (boto3.client): Timestream client
@@ -134,7 +158,6 @@ def main() -> None:
         key_deserializer=lambda v: v.decode("utf-8"),
         value_deserializer=lambda v: json.loads(v.decode("utf-8")),
     )
-    quotes_consumer.assign([TopicPartition(QUOTES_TOPIC, 0)])
 
     vwap_consumer = KafkaConsumer(
         bootstrap_servers=BOOTSTRAP_SERVERS,
@@ -148,10 +171,13 @@ def main() -> None:
         key_deserializer=lambda v: v.decode("utf-8"),
         value_deserializer=lambda v: json.loads(v.decode("utf-8")),
     )
-
-    vwap_consumer.assign([TopicPartition(VWAP_TOPIC, 0)])
+    assign_all_partitions(quotes_consumer, QUOTES_TOPIC)
+    assign_all_partitions(vwap_consumer, VWAP_TOPIC)
 
     try:
+        last_quote_value = None
+        last_vwap_value = None
+
         while True:
             quote_value = get_first_measure(
                 quotes_consumer.poll(timeout_ms=1000, max_records=1),
@@ -163,14 +189,19 @@ def main() -> None:
             )
 
             print(quotes_consumer.bootstrap_connected(), flush=True)
-            print(quotes_consumer.partitions_for_topic(QUOTES_TOPIC), flush=True)
             print(vwap_consumer.bootstrap_connected(), flush=True)
-            print(vwap_consumer.partitions_for_topic(VWAP_TOPIC), flush=True)
 
-            if quote_value is None or vwap_value is None:
+            if quote_value is not None:
+                last_quote_value = quote_value
+            if vwap_value is not None:
+                last_vwap_value = vwap_value
+
+            if last_quote_value is None or last_vwap_value is None:
                 continue
 
-            send_to_timestream(ts, quote_value, vwap_value)
+            send_to_timestream(ts, last_quote_value, last_vwap_value)
+            last_quote_value = None
+            last_vwap_value = None
     except KeyboardInterrupt:
         print("Stopping consumers...")
     finally:
