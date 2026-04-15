@@ -68,7 +68,7 @@ def send_to_timestream(ts: boto3.client, quote_value: float, vwap_value: float) 
     quote_record = {
         "Dimensions": [
             {"Name": "symbol", "Value": SYMBOL},
-            {"Name": "source_topic", "Value": "imat3a-BTC"},
+            {"Name": "source_topic", "Value": QUOTES_TOPIC},
             {"Name": "window_start", "Value": WINDOW_START},
             {"Name": "window_end", "Value": WINDOW_END},
             {"Name": "event_ts", "Value": WINDOW_END},
@@ -86,7 +86,7 @@ def send_to_timestream(ts: boto3.client, quote_value: float, vwap_value: float) 
             {"Name": "symbol", "Value": SYMBOL},
             {"Name": "window_start", "Value": WINDOW_START},
             {"Name": "window_end", "Value": WINDOW_END},
-            {"Name": "source_topic", "Value": "imat3a-BTC-VWAP-test"},
+            {"Name": "source_topic", "Value": VWAP_TOPIC},
         ],
         "MeasureName": "vwap",
         "MeasureValue": str(float(vwap_value)),
