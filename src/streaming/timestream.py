@@ -38,11 +38,13 @@ def now_epoch_ms() -> str:
 
 def iso_to_epoch_ms(value: str) -> str:
     dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
     return str(int(dt.timestamp() * 1000))
 
 
-def get_first_measure(records: dict, measure_name: str):
-    """Return the first value found for a given field in a Kafka poll result."""
+def get_first_message(records: dict, measure_name: str):
+    """Return the first Kafka message containing the requested measure."""
     if not records:
         print(f"No Kafka messages received while looking for {measure_name}.")
         return None
@@ -58,11 +60,28 @@ def get_first_measure(records: dict, measure_name: str):
             )
             value = consumer_record.value.get(measure_name)
             if value is not None:
-                return value
+                return consumer_record.value
 
     print(f"Kafka messages received, but {measure_name} value was not found.")
     return None
 
+
+def get_float_measure(message: dict, measure_name: str):
+    """Return a numeric measure from a Kafka message."""
+    value = message.get(measure_name)
+    if value is None:
+        return None
+    return float(value)
+
+
+def get_message_windows(message: dict):
+    """Return window_start and window_end from a VWAP Kafka message."""
+    window_start = message.get("window_start")
+    window_end = message.get("window_end")
+    if not window_start or not window_end:
+        print(f"VWAP message has no valid window_start/window_end: {message}")
+        return None
+    return window_start, window_end
 
 def assign_all_partitions(consumer: KafkaConsumer, topic: str) -> None:
     """Assign a consumer to every partition of a topic."""
@@ -78,7 +97,7 @@ def assign_all_partitions(consumer: KafkaConsumer, topic: str) -> None:
     print(f"Assigned {topic} partitions: {topic_partitions}")
 
 
-def send_to_timestream(ts: boto3.client, quote_value: float, vwap_value: float) -> None:
+def send_to_timestream(ts: boto3.client, quote_value: float, vwap_value: float, window_start: str, window_end: str) -> None:
     """
     Sends quote and VWAP values of coin to Timestream DB
 
@@ -93,14 +112,14 @@ def send_to_timestream(ts: boto3.client, quote_value: float, vwap_value: float) 
         "Dimensions": [
             {"Name": "symbol", "Value": SYMBOL},
             {"Name": "source_topic", "Value": QUOTES_TOPIC},
-            {"Name": "window_start", "Value": WINDOW_START},
-            {"Name": "window_end", "Value": WINDOW_END},
-            {"Name": "event_ts", "Value": WINDOW_END},
+            {"Name": "window_start", "Value": window_start},
+            {"Name": "window_end", "Value": window_end},
+            {"Name": "event_ts", "Value": window_end},
         ],
         "MeasureName": "close",
         "MeasureValue": str(float(quote_value)),
         "MeasureValueType": "DOUBLE",
-        "Time": iso_to_epoch_ms(WINDOW_END),
+        "Time": iso_to_epoch_ms(window_end),
         "TimeUnit": "MILLISECONDS",
         "Version": int(time.time() * 1000),
     }
@@ -108,14 +127,14 @@ def send_to_timestream(ts: boto3.client, quote_value: float, vwap_value: float) 
     vwap_record = {
         "Dimensions": [
             {"Name": "symbol", "Value": SYMBOL},
-            {"Name": "window_start", "Value": WINDOW_START},
-            {"Name": "window_end", "Value": WINDOW_END},
+            {"Name": "window_start", "Value": window_start},
+            {"Name": "window_end", "Value": window_end},
             {"Name": "source_topic", "Value": VWAP_TOPIC},
         ],
         "MeasureName": "vwap",
         "MeasureValue": str(float(vwap_value)),
         "MeasureValueType": "DOUBLE",
-        "Time": iso_to_epoch_ms(WINDOW_END),
+        "Time": iso_to_epoch_ms(window_end),
         "TimeUnit": "MILLISECONDS",
         "Version": int(time.time() * 1000) + 1,
     }
@@ -177,31 +196,52 @@ def main() -> None:
     try:
         last_quote_value = None
         last_vwap_value = None
+        last_window_start = None
+        last_window_end = None
 
         while True:
-            quote_value = get_first_measure(
+            quote_message = get_first_message(
                 quotes_consumer.poll(timeout_ms=1000, max_records=1),
                 "close",
             )
-            vwap_value = get_first_measure(
-                vwap_consumer.poll(timeout_ms=1000, max_records=1),
+            poll = vwap_consumer.poll(timeout_ms=1000, max_records=1)
+            vwap_message = get_first_message(
+                poll,
                 "vwap",
             )
 
             print(quotes_consumer.bootstrap_connected(), flush=True)
             print(vwap_consumer.bootstrap_connected(), flush=True)
 
-            if quote_value is not None:
-                last_quote_value = quote_value
-            if vwap_value is not None:
-                last_vwap_value = vwap_value
+            if quote_message is not None:
+                last_quote_value = get_float_measure(quote_message, "close")
 
-            if last_quote_value is None or last_vwap_value is None:
+            if vwap_message is not None:
+                windows = get_message_windows(vwap_message)
+                if windows is None:
+                    continue
+                last_vwap_value = get_float_measure(vwap_message, "vwap")
+                last_window_start, last_window_end = windows
+
+            if (
+                last_quote_value is None
+                or last_vwap_value is None
+                or last_window_start is None
+                or last_window_end is None
+            ):
                 continue
 
-            send_to_timestream(ts, last_quote_value, last_vwap_value)
+            send_to_timestream(
+                ts,
+                last_quote_value,
+                last_vwap_value,
+                last_window_start,
+                last_window_end,
+            )
             last_quote_value = None
             last_vwap_value = None
+            last_window_start = None
+            last_window_end = None
     except KeyboardInterrupt:
         print("Stopping consumers...")
     finally:
