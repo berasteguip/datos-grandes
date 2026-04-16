@@ -78,6 +78,8 @@ def get_message_windows(message: dict):
     """Return window_start and window_end from a VWAP Kafka message."""
     window_start = message.get("window_start")
     window_end = message.get("window_end")
+    print(window_start)
+    print(window_end)    
     if not window_start or not window_end:
         print(f"VWAP message has no valid window_start/window_end: {message}")
         return None
