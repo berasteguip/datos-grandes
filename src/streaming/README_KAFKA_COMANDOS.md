@@ -57,7 +57,7 @@ $KAFKA_HOME/bin/kafka-topics.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --command-config client.properties \
   --create \
-  --topic imat3a-ETH \
+  --topic imat3a_ETH_VOLUME_SPIKE \
   --partitions 1 \
   --replication-factor 1
 ```
@@ -105,7 +105,7 @@ $KAFKA_HOME/bin/kafka-console-producer.sh \
 $KAFKA_HOME/bin/kafka-console-consumer.sh \
   --bootstrap-server "$BOOTSTRAP" \
   --consumer.config client.properties \
-  --topic imat3a_ETH_VWAP \
+  --topic imat3a_ETH_VOLUME_SPIKE \
   --property print.key=true \
   --consumer-property group.id=imat3a_group1
 ```
